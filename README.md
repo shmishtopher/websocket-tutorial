@@ -109,7 +109,7 @@ server.listen(80)
   <body>
     <p>Hello!</p>
     <script src="app"></script>
-  <body>
+  </body>
 </html>
 ```
 
@@ -129,4 +129,12 @@ html, body {
 }
 ```
 
-Restart the server (`npm test`) to make sure everything is working, you should be able to serve static assets now!  Note: you only need to restart the server with `npm test` when you make changes to `server.js`, changes made to your static assets only require a browser reload.
+Restart the server (`npm test`) to make sure everything is working, you should be able to serve static assets now!  Note: you only need to restart the server with `npm test` when you make changes to `server.js`, changes made to your static assets only require a browser reload.  While static assets are cool, we need our server to be able to hadle websocket requests.  You can find details of the spec we'll be implementing [here](https://tools.ietf.org/html/rfc6455).  In this example, we'll be listning for requests made to `/chat`.  The client is going to be sending us an http GET request that looks something like this:
+```
+GET /chat HTTP/1.1
+Host: example.com:8000
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+```
