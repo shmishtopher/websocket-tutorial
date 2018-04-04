@@ -16,7 +16,7 @@ First things first, we need to setup our development space.  Since we'll be usin
 | version | 1.0.0 |
 | description | websockets workshop |
 | entry point | server.js |
-| test command | node . |
+| test command | node ./server.js |
 | git repository | {your repo} |
 | keywords | {any} |
 | author | {your name} |
