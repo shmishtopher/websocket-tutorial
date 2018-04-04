@@ -129,4 +129,4 @@ html, body {
 }
 ```
 
-Restart the server (`npm test`) to make sure everything is working, you should be able to serve static assets now!
+Restart the server (`npm test`) to make sure everything is working, you should be able to serve static assets now!  Note: you only need to restart the server with `npm test` when you make changes to `server.js`, changes made to your static assets only require a browser reload.
