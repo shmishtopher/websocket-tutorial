@@ -135,6 +135,47 @@ GET /chat HTTP/1.1
 Host: example.com:8000
 Upgrade: websocket
 Connection: Upgrade
-Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Key: jqAGlX2N4P4BNdFTRvVP9g==
 Sec-WebSocket-Version: 13
+```
+Let's add some logic to `server.js` to respond to these requests:
+```javascript
+const { createServer } = require('http')
+const { createReadStream } = require('fs')
+const { createHash } = require('crypto')
+
+const MAGIC_STR = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+
+const server = createServer((req, res) => {
+  switch (req.url) {
+    case '/':
+      res.writeHead(200, {'Content-Type': 'text/html'})
+      createReadStream(`${__dirname}/client.html`).pipe(res)
+      break
+    case '/style':
+      res.writeHead(200, {'Content-Type': 'text/css'})
+      createReadStream(`${__dirname}/client.css`).pipe(res)
+      break
+    case '/app':
+      res.writeHead(200, {'Content-Type': 'application/javascript'})
+      createReadStream(`${__dirname}/client.js`).pipe(res)
+      break
+    case '/chat':
+      const hash = createHash('sha1')
+      hash.update(req.headers['sec-websocket-key'] + MAGIC_STR)
+      res.writeHead(101, {
+        'Upgrade': 'websocket',
+        'Connection': 'Upgrade',
+        'Sec-WebSocket-Accept': hash.digest('base64')
+      })
+      res.end()
+      break
+    default:
+      res.writeHead(404)
+      res.end('404 - not found :(')
+      break
+  }
+})
+
+server.listen(80)
 ```
