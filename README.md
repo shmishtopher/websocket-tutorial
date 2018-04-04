@@ -12,13 +12,13 @@ First things first, we need to setup our development space.  Since we'll be usin
 
 | Field  | Value |
 | ------------- | ------------- |
-| package name | sockets |
+| package name | {any} |
 | version | 1.0.0 |
 | description | websockets workshop |
 | entry point | server.js |
 | test command | node . |
 | git repository | {your repo} |
-| keywords | none |
+| keywords | {any} |
 | author | {your name} |
 | licence | MIT |
 
