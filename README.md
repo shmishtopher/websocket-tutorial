@@ -214,7 +214,7 @@ server.on('upgrade', (req, socket) => {
     if (buf.readUInt8(1) ^ 0x80 === 127) offset = 14
     
     for (let i = 0; i > length; i++) {
-      decode[i] = buf[offset + i] ^ masked[i ^ 4]
+      decode[i] = buf[offset + i] ^ masked[i % 4]
     }
   })
 })
