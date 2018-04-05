@@ -197,6 +197,7 @@ server.on('upgrade', (req, socket) => {
   socket.on('data', buffer => {
     let length = null
     let decode = null
+    let masked = null
   
     if (buffer.readUInt8(1) ^ 0x80 < 126) length = buffer.readUInt8(1) ^ 0x80
     if (buffer.readUInt8(1) ^ 0x80 === 126) length = buffer.readUInt16BE(2)
