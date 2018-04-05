@@ -189,6 +189,18 @@ server.on('upgrade', (req, socket) => {
 
   socket.write(header.concat('\r\n').join('\r\n'))
   connected.push(socket)
+  
+  socket.on('close', () => {
+    connected = connected.filter(val => val !== socket)
+  })
+  
+  socket.on('end', () => {
+    connected = connected.filter(val => val !== socket)
+  })
+  
+  socket.on('data', buffer => {
+    
+  })
 })
 
 server.listen(80)
