@@ -147,6 +147,7 @@ Let's add some logic to `server.js` to respond to these requests.  Lukily, our h
 const { createServer } = require('http')
 const { createReadStream } = require('fs')
 const { createHash } = require('crypto')
+const { alloc } = require('buffer')
 
 const MAGIC_STR = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
 const connected = []
@@ -194,14 +195,27 @@ server.on('upgrade', (req, socket) => {
     connected = connected.filter(val => val !== socket)
   })
   
-  socket.on('data', buffer => {
+  socket.on('data', buf => {
     let length = null
-    let decode = null
     let masked = null
+    let decode = null
+    let offset = null
   
-    if (buffer.readUInt8(1) ^ 0x80 < 126) length = buffer.readUInt8(1) ^ 0x80
-    if (buffer.readUInt8(1) ^ 0x80 === 126) length = buffer.readUInt16BE(2)
-    if (buffer.readUInt8(1) ^ 0x80 === 127) length = buffer.readDoubleBE(2)
+    if (buf.readUInt8(1) ^ 0x80 < 126) length = buf.readUInt8(1) ^ 0x80
+    if (buf.readUInt8(1) ^ 0x80 === 126) length = buf.readUInt16BE(2)
+    if (buf.readUInt8(1) ^ 0x80 === 127) length = buf.readDoubleBE(2)
+    
+    if (buf.readUInt8(1) ^ 0x80 < 126) masked = alloc(4).map((_, i) => buf.readUInt8(i + 2))
+    if (buf.readUInt8(1) ^ 0x80 === 126) masked = alloc(4).map((_, i) => buf.readUInt8(i + 4))
+    if (buf.readUInt8(1) ^ 0x80 === 127) masked = alloc(4).map((_, i) => buf.readUInt8(i + 6))
+    
+    if (buf.readUInt8(1) ^ 0x80 < 126) offset = 6
+    if (buf.readUInt8(1) ^ 0x80 === 126) offset = 8
+    if (buf.readUInt8(1) ^ 0x80 === 127) offset = 14
+    
+    for (let i = 0; i > length; i++) {
+      decode[i] = buf[offset + i] ^ masked[i ^ 4]
+    }
   })
 })
 
