@@ -194,12 +194,13 @@ server.on('upgrade', (req, socket) => {
     connected = connected.filter(val => val !== socket)
   })
   
-  socket.on('end', () => {
-    connected = connected.filter(val => val !== socket)
-  })
-  
   socket.on('data', buffer => {
-    
+    let length = null
+    let decode = null
+  
+    if (buffer.readUInt8(1) ^ 0x80 < 126) length = buffer.readUInt8(1) ^ 0x80
+    if (buffer.readUInt8(1) ^ 0x80 === 126) length = buffer.readUInt16BE(2)
+    if (buffer.readUInt8(1) ^ 0x80 === 127) length = buffer.readDoubleBE(2)
   })
 })
 
