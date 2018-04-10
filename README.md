@@ -147,10 +147,10 @@ Let's add some logic to `server.js` to respond to these requests.  Lukily, our h
 const { createServer } = require('http')
 const { createReadStream } = require('fs')
 const { createHash } = require('crypto')
-const { alloc } = require('buffer')
+const { Buffer } = require('buffer')
 
-const MAGIC_STR = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
-const connected = []
+let MAGIC_STR = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+let connected = []
 
 const server = createServer((req, res) => {
   switch (req.url) {
@@ -196,28 +196,31 @@ server.on('upgrade', (req, socket) => {
   })
   
   socket.on('data', buf => {
-    let length = null
-    let masked = null
-    let decode = null
-    let offset = null
-  
-    if (buf.readUInt8(1) ^ 0x80 < 126) length = buf.readUInt8(1) ^ 0x80
-    if (buf.readUInt8(1) ^ 0x80 === 126) length = buf.readUInt16BE(2)
-    if (buf.readUInt8(1) ^ 0x80 === 127) length = buf.readDoubleBE(2)
+    let length = []
+    let masked = []
+    let offset = []
+    let decode = []
+
+    if ((buf.readUInt8(1) ^ 0x80) < 126) length = buf.readUInt8(1) ^ 0x80
+    if ((buf.readUInt8(1) ^ 0x80) === 126) length = buf.readUInt16BE(2)
+    if ((buf.readUInt8(1) ^ 0x80) === 127) length = buf.readDoubleBE(2)
     
-    if (buf.readUInt8(1) ^ 0x80 < 126) masked = alloc(4).map((_, i) => buf.readUInt8(i + 2))
-    if (buf.readUInt8(1) ^ 0x80 === 126) masked = alloc(4).map((_, i) => buf.readUInt8(i + 4))
-    if (buf.readUInt8(1) ^ 0x80 === 127) masked = alloc(4).map((_, i) => buf.readUInt8(i + 6))
+    if ((buf.readUInt8(1) ^ 0x80) < 126) masked = Buffer.alloc(4).map((_, i) => buf.readUInt8(i + 2))
+    if ((buf.readUInt8(1) ^ 0x80) === 126) masked = Buffer.alloc(4).map((_, i) => buf.readUInt8(i + 4))
+    if ((buf.readUInt8(1) ^ 0x80) === 127) masked = Buffer.alloc(4).map((_, i) => buf.readUInt8(i + 6))
     
-    if (buf.readUInt8(1) ^ 0x80 < 126) offset = 6
-    if (buf.readUInt8(1) ^ 0x80 === 126) offset = 8
-    if (buf.readUInt8(1) ^ 0x80 === 127) offset = 14
+    if ((buf.readUInt8(1) ^ 0x80) < 126) offset = 6
+    if ((buf.readUInt8(1) ^ 0x80) === 126) offset = 8
+    if ((buf.readUInt8(1) ^ 0x80) === 127) offset = 14
     
-    for (let i = 0; i > length; i++) {
+    for (let i = 0; i < length; i++) {
       decode[i] = buf[offset + i] ^ masked[i % 4]
     }
+
+    console.log(String.fromCharCode(...decode))
   })
 })
 
 server.listen(80)
+
 ```
