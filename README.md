@@ -200,6 +200,7 @@ server.on('upgrade', (req, socket) => {
     let masked = []
     let offset = []
     let decode = []
+    let opcode = []
 
     if ((buf.readUInt8(1) ^ 0x80) < 126) length = buf.readUInt8(1) ^ 0x80
     if ((buf.readUInt8(1) ^ 0x80) === 126) length = buf.readUInt16BE(2)
