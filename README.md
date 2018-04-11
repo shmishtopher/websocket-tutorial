@@ -1,6 +1,6 @@
 # WebAPIs: WebSockets [WIP]
 
-Learn the inner workings of websocks by building a live chat application!  We'll be using JavaScript, but the concepts learned here will carry over to any language.  Note: this tutorial will not be using any external dependancies, as it is designed to teach the inner workings of WebSockets.  For live applications, I reccomend you use the popular ["ws"](https://www.npmjs.com/package/ws) package.
+Learn the inner workings of websocks by building a live chat application!  We'll be using JavaScript, but the concepts learned here will carry over to any language.  Note: this tutorial will not be using any external dependancies, as it is designed to teach the inner workings of WebSockets.  For live applications, I recommend you use the popular ["ws"](https://www.npmjs.com/package/ws) package.
 
 1. [Setup](#setup)
 2. [Building the backend](#building-the-backend)
